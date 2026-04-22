@@ -1,0 +1,88 @@
+.filter-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.filter-tabs--pills {
+    background: var(--color-gray-100);
+    padding: var(--space-1);
+    border-radius: var(--radius-full);
+}
+
+.filter-tabs__btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-gray-600);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: color var(--transition-fast),
+        background-color var(--transition-fast),
+        border-color var(--transition-fast);
+    z-index: 1;
+}
+
+.filter-tabs--pills .filter-tabs__btn {
+    border: none;
+}
+
+.filter-tabs__btn:hover {
+    color: var(--color-gray-900);
+    background: var(--color-gray-50);
+}
+
+.filter-tabs__btn--active {
+    color: white;
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.filter-tabs__btn--active:hover {
+    color: white;
+    background: var(--color-primary);
+}
+
+.filter-tabs__icon {
+    display: flex;
+    align-items: center;
+    font-size: var(--text-base);
+}
+
+.filter-tabs__indicator {
+    position: absolute;
+    inset: 0;
+    background: var(--color-primary);
+    border-radius: inherit;
+    z-index: -1;
+}
+
+/* Role filter variant */
+.filter-tabs--role {
+    gap: var(--space-1);
+}
+
+.filter-tabs--role .filter-tabs__btn {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-xs);
+    border-radius: var(--radius-md);
+}
+
+@media (max-width: 640px) {
+    .filter-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: var(--space-2);
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .filter-tabs__btn {
+        flex-shrink: 0;
+    }
+}

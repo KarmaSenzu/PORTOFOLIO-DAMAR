@@ -1,0 +1,287 @@
+.image-upload {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.image-upload__label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-gray-600);
+}
+
+.image-upload__input {
+    display: none;
+}
+
+.image-upload__dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-8);
+    border: 2px dashed var(--color-gray-300);
+    border-radius: var(--radius-xl);
+    background: var(--color-gray-50);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.image-upload__dropzone:hover,
+.image-upload__dropzone--active {
+    border-color: var(--color-primary);
+    background: var(--color-primary-50);
+}
+
+.image-upload__icon {
+    font-size: 2.5rem;
+}
+
+.image-upload__text {
+    font-size: var(--text-sm);
+    color: var(--color-gray-600);
+    text-align: center;
+    line-height: 1.6;
+}
+
+.image-upload__text strong {
+    color: var(--color-primary);
+}
+
+.image-upload__hint {
+    font-size: var(--text-xs);
+    color: var(--color-gray-400);
+    text-align: center;
+}
+
+.image-upload__preview {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background: var(--color-gray-100);
+}
+
+.image-upload__preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-upload__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.image-upload__preview:hover .image-upload__overlay {
+    opacity: 1;
+}
+
+.image-upload__btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: transform var(--transition-fast);
+}
+
+.image-upload__btn:hover {
+    transform: scale(1.05);
+}
+
+.image-upload__btn--change {
+    background: var(--color-white);
+    color: var(--color-gray-700);
+}
+
+.image-upload__btn--remove {
+    background: var(--color-error);
+    color: var(--color-white);
+}
+
+.image-upload__error {
+    font-size: var(--text-sm);
+    color: var(--color-error);
+    margin-top: var(--space-1);
+}
+
+/* ============================================
+   MULTIPLE IMAGES - GALLERY STYLES
+   ============================================ */
+
+.image-upload--multiple {
+    gap: var(--space-3);
+}
+
+.image-upload__gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: var(--space-3);
+}
+
+.image-upload__preview-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--color-gray-100);
+    border: 2px solid var(--color-gray-200);
+    transition: all var(--transition-fast);
+}
+
+.image-upload__preview-item:hover {
+    border-color: var(--color-primary);
+    transform: scale(1.02);
+}
+
+.image-upload__preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-upload__remove-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-error);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+    z-index: 10;
+}
+
+.image-upload__preview-item:hover .image-upload__remove-btn {
+    opacity: 1;
+}
+
+.image-upload__remove-btn:hover {
+    transform: scale(1.1);
+    background: #c0392b;
+}
+
+.image-upload__primary-badge {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    padding: 2px 8px;
+    background: var(--color-primary);
+    color: white;
+    font-size: 10px;
+    font-weight: var(--font-semibold);
+    border-radius: var(--radius-md);
+    text-transform: uppercase;
+}
+
+/* Add more button in gallery */
+.image-upload__add-more {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    border: 2px dashed var(--color-gray-300);
+    border-radius: var(--radius-lg);
+    background: var(--color-gray-50);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    min-height: 120px;
+}
+
+.image-upload__add-more:hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary-50);
+}
+
+.image-upload__add-icon {
+    font-size: 2rem;
+    color: var(--color-gray-400);
+    line-height: 1;
+}
+
+.image-upload__add-more:hover .image-upload__add-icon {
+    color: var(--color-primary);
+}
+
+.image-upload__add-text {
+    font-size: var(--text-xs);
+    color: var(--color-gray-500);
+    margin-top: var(--space-1);
+}
+
+/* Action buttons */
+.image-upload__actions,
+.image-upload__single-actions {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+}
+
+.image-upload__action-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    background: var(--color-gray-100);
+    color: var(--color-gray-700);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.image-upload__action-btn:hover {
+    background: var(--color-gray-200);
+}
+
+.image-upload__action-btn--danger {
+    background: var(--color-error-50, #fef2f2);
+    color: var(--color-error);
+    border-color: var(--color-error-200, #fecaca);
+}
+
+.image-upload__action-btn--danger:hover {
+    background: var(--color-error);
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .image-upload__gallery {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .image-upload__actions {
+        flex-direction: column;
+    }
+
+    .image-upload__action-btn {
+        justify-content: center;
+    }
+}

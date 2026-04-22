@@ -1,0 +1,439 @@
+.about-page {
+    padding-top: 100px;
+}
+
+/* Hero Section */
+.about-hero {
+    background: linear-gradient(180deg, var(--color-gray-50) 0%, var(--color-white) 100%);
+}
+
+.about-hero__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-12);
+    align-items: center;
+}
+
+.about-hero__text {
+    max-width: 500px;
+}
+
+.about-hero__title {
+    font-size: var(--text-4xl);
+    font-weight: var(--font-bold);
+    line-height: 1.2;
+    margin-bottom: var(--space-6);
+}
+
+.about-hero__name {
+    color: var(--color-gray-900);
+}
+
+.about-hero__description {
+    font-size: var(--text-base);
+    color: var(--color-gray-600);
+    line-height: var(--leading-relaxed);
+    margin-bottom: var(--space-8);
+}
+
+.about-hero__actions {
+    display: flex;
+    gap: var(--space-4);
+}
+
+/* Photo */
+.about-hero__image {
+    display: flex;
+    justify-content: center;
+}
+
+.about-hero__photo {
+    position: relative;
+    width: 300px;
+    height: 380px;
+    border-radius: var(--radius-3xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+}
+
+.about-hero__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Section Header */
+.about-section__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-8);
+}
+
+.about-section__icon {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--color-primary);
+}
+
+.about-section__header h2 {
+    font-size: var(--text-2xl);
+    margin: 0;
+}
+
+/* Toolkit */
+.about-toolkit__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+}
+
+/* Certificates */
+.about-certificates__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-6);
+}
+
+.cert-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    transition: box-shadow var(--transition-base), transform var(--transition-base);
+}
+
+.cert-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.cert-card__image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    background: var(--color-gray-100);
+}
+
+.cert-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-base);
+}
+
+.cert-card:hover .cert-card__image img {
+    transform: scale(1.05);
+}
+
+.cert-card__content {
+    padding: var(--space-4);
+}
+
+.cert-card__title {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    margin-bottom: var(--space-1);
+    line-height: 1.3;
+}
+
+.cert-card__issuer {
+    font-size: var(--text-xs);
+    color: var(--color-gray-600);
+    margin: 0 0 var(--space-1) 0;
+}
+
+.cert-card__date {
+    font-size: var(--text-xs);
+    color: var(--color-gray-400);
+    margin: 0 0 var(--space-3) 0;
+}
+
+.cert-card__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    color: var(--color-primary);
+    background: var(--color-primary-50);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.cert-card__btn:hover {
+    background: var(--color-primary);
+    color: white;
+}
+
+/* Certificate Modal */
+.cert-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+}
+
+.cert-modal {
+    position: relative;
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    background: var(--color-white);
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+.cert-modal__close {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-2xl);
+    background: var(--color-white);
+    border: none;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+    z-index: 10;
+    transition: transform var(--transition-fast);
+}
+
+.cert-modal__close:hover {
+    transform: scale(1.1);
+}
+
+.cert-modal__image {
+    width: 100%;
+    max-height: 400px;
+    overflow: hidden;
+    background: var(--color-gray-100);
+}
+
+.cert-modal__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cert-modal__info {
+    padding: var(--space-6);
+}
+
+.cert-modal__info h3 {
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    margin-bottom: var(--space-4);
+}
+
+.cert-modal__details {
+    margin-bottom: var(--space-4);
+}
+
+.cert-modal__details p {
+    font-size: var(--text-sm);
+    color: var(--color-gray-600);
+    margin: 0 0 var(--space-2) 0;
+}
+
+.cert-modal__details strong {
+    color: var(--color-gray-800);
+}
+
+.cert-modal__verify-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: white;
+    background: var(--color-primary);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    transition: background var(--transition-fast);
+}
+
+.cert-modal__verify-btn:hover {
+    background: var(--color-primary-dark);
+}
+
+/* Journey */
+.about-journey__timeline {
+    max-width: 700px;
+}
+
+/* Hobbies */
+.about-hobbies__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+}
+
+.about-hobby-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    transition: box-shadow var(--transition-base);
+}
+
+.about-hobby-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.about-hobby-card__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    font-size: 1.5rem;
+    border-radius: var(--radius-lg);
+    flex-shrink: 0;
+}
+
+.about-hobby-card__content h4 {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    margin-bottom: var(--space-1);
+}
+
+.about-hobby-card__content p {
+    font-size: var(--text-sm);
+    color: var(--color-gray-500);
+    margin: 0;
+}
+
+/* Contact */
+.about-contact {
+    background: var(--color-gray-50);
+}
+
+.about-contact__content {
+    text-align: center;
+    padding: var(--space-12);
+    background: var(--color-white);
+    border-radius: var(--radius-3xl);
+    box-shadow: var(--shadow-lg);
+}
+
+.about-contact__content h2 {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-4);
+}
+
+.about-contact__content>p {
+    color: var(--color-gray-600);
+    margin-bottom: var(--space-6);
+}
+
+.about-contact__email {
+    margin-bottom: var(--space-6);
+}
+
+.about-contact__email a {
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    color: var(--color-primary);
+}
+
+.about-contact__social {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-6);
+}
+
+.about-contact__social a {
+    font-weight: var(--font-medium);
+    color: var(--color-gray-600);
+    transition: color var(--transition-fast);
+}
+
+.about-contact__social a:hover {
+    color: var(--color-gray-900);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .about-toolkit__grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .about-certificates__grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .about-hero__content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .about-hero__text {
+        max-width: none;
+    }
+
+    .about-hero__actions {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .about-hero__image {
+        order: -1;
+    }
+
+    .about-hero__photo {
+        width: 200px;
+        height: 260px;
+    }
+
+    .about-toolkit__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .about-certificates__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .about-hobbies__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .about-contact__content {
+        padding: var(--space-8);
+    }
+
+    .cert-modal {
+        max-width: 95%;
+    }
+
+    .cert-modal__image {
+        max-height: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-certificates__grid {
+        grid-template-columns: 1fr;
+    }
+}

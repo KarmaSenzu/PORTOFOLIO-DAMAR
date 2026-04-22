@@ -1,0 +1,134 @@
+.projects-page {
+    padding-top: 100px;
+}
+
+/* Header */
+.projects-page__header {
+    margin-bottom: var(--space-10);
+}
+
+.projects-page__title {
+    font-size: var(--text-5xl);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-4);
+}
+
+.projects-page__description {
+    font-size: var(--text-lg);
+    color: var(--color-gray-600);
+    max-width: 600px;
+}
+
+/* Filters */
+.projects-page__filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.projects-page__search {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    min-width: 250px;
+}
+
+.projects-page__search svg {
+    color: var(--color-gray-400);
+    flex-shrink: 0;
+}
+
+.projects-page__search input {
+    flex: 1;
+    border: none;
+    padding: 0;
+    font-size: var(--text-sm);
+    background: transparent;
+}
+
+.projects-page__search input:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Role Filter */
+.projects-page__role-filter {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-8);
+}
+
+.projects-page__role-label {
+    font-size: var(--text-sm);
+    color: var(--color-gray-500);
+}
+
+/* Grid */
+.projects-page__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+}
+
+/* Empty State */
+.projects-page__empty {
+    text-align: center;
+    padding: var(--space-16) var(--space-8);
+}
+
+.projects-page__empty-icon {
+    font-size: 4rem;
+    margin-bottom: var(--space-4);
+}
+
+.projects-page__empty h3 {
+    margin-bottom: var(--space-2);
+}
+
+.projects-page__empty p {
+    color: var(--color-gray-500);
+}
+
+/* Load More */
+.projects-page__load-more {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-10);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .projects-page__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .projects-page__title {
+        font-size: var(--text-4xl);
+    }
+
+    .projects-page__filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .projects-page__search {
+        min-width: auto;
+    }
+
+    .projects-page__role-filter {
+        flex-wrap: wrap;
+    }
+
+    .projects-page__grid {
+        grid-template-columns: 1fr;
+    }
+}
