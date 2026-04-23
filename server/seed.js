@@ -444,16 +444,18 @@ async function seed() {
     // Connect without database to create it if needed
     connection = await mysql.createConnection({
       host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT) || 3306,
       user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASSWORD || ''
+      password: process.env.DB_PASSWORD || '',
+      multipleStatements: true
     });
 
     const dbName = process.env.DB_NAME || 'portfolio_damar';
 
     // Create database if not exists
     console.log(`Creating database "${dbName}" if not exists...`);
-    await connection.execute(`CREATE DATABASE IF NOT EXISTS \`${dbName}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
-    await connection.execute(`USE \`${dbName}\``);
+    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
+    await connection.changeUser({ database: dbName });
 
     // Run migrations
     console.log('Running migrations...');
@@ -465,14 +467,14 @@ async function seed() {
       .filter(s => s.length > 0 && !s.startsWith('--'));
 
     for (const statement of statements) {
-      await connection.execute(statement);
+      await connection.query(statement);
     }
     console.log('Tables created successfully.');
 
     // Seed admin user
     console.log('Seeding admin user...');
     const hashedPassword = await bcrypt.hash(adminUser.password, 10);
-    await connection.execute(
+    await connection.query(
       'INSERT INTO users (username, password) VALUES (?, ?) ON DUPLICATE KEY UPDATE password = ?',
       [adminUser.username, hashedPassword, hashedPassword]
     );
@@ -485,7 +487,7 @@ async function seed() {
       const placeholders = columns.map(() => '?').join(', ');
       const values = columns.map(col => project[col]);
 
-      await connection.execute(
+      await connection.query(
         `INSERT INTO projects (${columns.join(', ')}) VALUES (${placeholders})
          ON DUPLICATE KEY UPDATE title_en = VALUES(title_en)`,
         values
@@ -500,7 +502,7 @@ async function seed() {
       const placeholders = columns.map(() => '?').join(', ');
       const values = columns.map(col => post[col]);
 
-      await connection.execute(
+      await connection.query(
         `INSERT INTO blog_posts (${columns.join(', ')}) VALUES (${placeholders})
          ON DUPLICATE KEY UPDATE title_en = VALUES(title_en)`,
         values
@@ -510,10 +512,9 @@ async function seed() {
 
     // Seed skills
     console.log('Seeding skills...');
-    // Clear existing skills to avoid duplicates
-    await connection.execute('DELETE FROM skills');
+    await connection.query('DELETE FROM skills');
     for (const skill of skills) {
-      await connection.execute(
+      await connection.query(
         'INSERT INTO skills (name, icon, category, color, sort_order) VALUES (?, ?, ?, ?, ?)',
         [skill.name, skill.icon, skill.category, skill.color, skill.sort_order]
       );
@@ -522,9 +523,9 @@ async function seed() {
 
     // Seed experiences
     console.log('Seeding experiences...');
-    await connection.execute('DELETE FROM experiences');
+    await connection.query('DELETE FROM experiences');
     for (const exp of experiences) {
-      await connection.execute(
+      await connection.query(
         `INSERT INTO experiences (title_en, title_id, company, period_en, period_id, description_en, description_id, is_current, is_education, sort_order)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [exp.title_en, exp.title_id, exp.company, exp.period_en, exp.period_id, exp.description_en, exp.description_id, exp.is_current, exp.is_education, exp.sort_order]
@@ -534,9 +535,9 @@ async function seed() {
 
     // Seed certificates
     console.log('Seeding certificates...');
-    await connection.execute('DELETE FROM certificates');
+    await connection.query('DELETE FROM certificates');
     for (const cert of certificates) {
-      await connection.execute(
+      await connection.query(
         `INSERT INTO certificates (title_en, title_id, issuer, date, credential_id, image, credential_url, sort_order)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [cert.title_en, cert.title_id, cert.issuer, cert.date, cert.credential_id, cert.image, cert.credential_url, cert.sort_order]
@@ -547,7 +548,7 @@ async function seed() {
     // Seed settings
     console.log('Seeding settings...');
     for (const setting of settings) {
-      await connection.execute(
+      await connection.query(
         `INSERT INTO settings (setting_key, setting_value) VALUES (?, ?)
          ON DUPLICATE KEY UPDATE setting_value = ?`,
         [setting.setting_key, setting.setting_value, setting.setting_value]
