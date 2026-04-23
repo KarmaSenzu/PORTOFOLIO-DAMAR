@@ -88,10 +88,22 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ error: 'Endpoint not found.' });
-});
+// Serve frontend static files in production (Docker)
+const distPath = path.join(__dirname, '..', 'dist');
+if (fs.existsSync(distPath)) {
+  console.log('Serving frontend from:', distPath);
+  app.use(express.static(distPath));
+
+  // SPA fallback - all non-API routes serve index.html
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+} else {
+  // 404 handler (dev mode - frontend served by Vite)
+  app.use((req, res) => {
+    res.status(404).json({ error: 'Endpoint not found.' });
+  });
+}
 
 // Global error handling middleware
 app.use((err, req, res, next) => {
