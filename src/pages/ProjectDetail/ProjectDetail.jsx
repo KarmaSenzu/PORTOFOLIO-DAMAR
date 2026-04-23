@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getProjects } from '../../data/projects';
+import { projectService } from '../../services/projects';
+import { uploadService } from '../../services/upload';
 import { getLocalizedText } from '../../utils/helpers';
 import { useAnalytics } from '../../hooks/useAnalytics';
 import { CaseStudyTimeline } from '../../components/Timeline/Timeline';
@@ -20,12 +21,33 @@ const ProjectDetail = () => {
     const [lightboxIndex, setLightboxIndex] = useState(0);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [slideDirection, setSlideDirection] = useState(0);
+    const [project, setProject] = useState(null);
+    const [allProjects, setAllProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const projects = getProjects();
-    const project = projects.find(p => p.id === id);
-    const currentIndex = projects.findIndex(p => p.id === id);
-    const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null;
-    const nextProject = currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const [projectRes, allRes] = await Promise.all([
+                    projectService.getBySlug(id),
+                    projectService.getAll(),
+                ]);
+                const proj = projectRes.data || projectRes;
+                setProject(proj);
+                setAllProjects(allRes.data || allRes);
+            } catch (error) {
+                console.error('Failed to fetch project:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, [id]);
+
+    const currentIndex = useMemo(() => allProjects.findIndex(p => p.id === id || p.slug === id), [allProjects, id]);
+    const prevProject = currentIndex > 0 ? allProjects[currentIndex - 1] : null;
+    const nextProject = currentIndex < allProjects.length - 1 ? allProjects[currentIndex + 1] : null;
 
     useEffect(() => {
         if (project) {
@@ -35,7 +57,16 @@ const ProjectDetail = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        setCurrentImageIndex(0);
     }, [id]);
+
+    if (loading) {
+        return (
+            <div className="project-detail" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+                <div className="loading-spinner" />
+            </div>
+        );
+    }
 
     if (!project) {
         return (
@@ -51,7 +82,8 @@ const ProjectDetail = () => {
         setLightboxOpen(true);
     };
 
-    const projectImages = project.images || [project.image];
+    const rawImages = project.images || [project.image];
+    const projectImages = rawImages.map(img => uploadService.getImageUrl(img));
 
     const handleNextImage = () => {
         if (currentImageIndex < projectImages.length - 1) {
@@ -401,7 +433,7 @@ const ProjectDetail = () => {
                 {/* Navigation */}
                 <div className="project-detail__nav">
                     {prevProject ? (
-                        <Link to={`/projects/${prevProject.id}`} className="project-detail__nav-link project-detail__nav-link--prev">
+                        <Link to={`/projects/${prevProject.slug || prevProject.id}`} className="project-detail__nav-link project-detail__nav-link--prev">
                             <span className="project-detail__nav-label">{t('projectDetail.previousProject')}</span>
                             <span className="project-detail__nav-title">
                                 {getLocalizedText(prevProject.title, language)}
@@ -409,7 +441,7 @@ const ProjectDetail = () => {
                         </Link>
                     ) : <div />}
                     {nextProject && (
-                        <Link to={`/projects/${nextProject.id}`} className="project-detail__nav-link project-detail__nav-link--next">
+                        <Link to={`/projects/${nextProject.slug || nextProject.id}`} className="project-detail__nav-link project-detail__nav-link--next">
                             <span className="project-detail__nav-label">{t('projectDetail.nextProject')}</span>
                             <span className="project-detail__nav-title">
                                 {getLocalizedText(nextProject.title, language)}
@@ -421,7 +453,7 @@ const ProjectDetail = () => {
 
             {/* Lightbox */}
             <Lightbox
-                images={project.images || [project.image]}
+                images={projectImages}
                 currentIndex={lightboxIndex}
                 isOpen={lightboxOpen}
                 onClose={() => setLightboxOpen(false)}

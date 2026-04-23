@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { getProjects } from '../../data/projects';
+import { projectService } from '../../services/projects';
 import { useAnalytics } from '../../hooks/useAnalytics';
 import ProjectCard from '../../components/ProjectCard/ProjectCard';
 import FilterTabs from '../../components/FilterTabs/FilterTabs';
@@ -15,12 +15,27 @@ const Projects = () => {
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [roleFilter, setRoleFilter] = useState('all');
     const [visibleCount, setVisibleCount] = useState(6);
-
-    const projects = getProjects();
+    const [projects, setProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         onPageView('projects');
     }, [onPageView]);
+
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                setLoading(true);
+                const res = await projectService.getAll();
+                setProjects(res.data || res);
+            } catch (error) {
+                console.error('Failed to fetch projects:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProjects();
+    }, []);
 
     // Category filters
     const categoryFilters = [
@@ -81,6 +96,16 @@ const Projects = () => {
     useEffect(() => {
         setVisibleCount(6);
     }, [searchQuery, categoryFilter, roleFilter]);
+
+    if (loading) {
+        return (
+            <main className="projects-page">
+                <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+                    <div className="loading-spinner" />
+                </div>
+            </main>
+        );
+    }
 
     return (
         <main className="projects-page">

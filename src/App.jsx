@@ -20,8 +20,6 @@ const ProjectDetail = lazy(() => import('./pages/ProjectDetail/ProjectDetail'));
 const About = lazy(() => import('./pages/About/About'));
 const Blog = lazy(() => import('./pages/Blog/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost/BlogPost'));
-const Admin = lazy(() => import('./pages/Admin/Admin'));
-
 // Hidden Admin pages (accessible via URL only)
 const Login = lazy(() => import('./pages/Login/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard/Dashboard'));
@@ -40,9 +38,6 @@ const PublicLayout = ({ children }) => (
     <Navbar />
     {children}
     <Footer />
-    <Suspense fallback={null}>
-      <Admin />
-    </Suspense>
   </>
 );
 

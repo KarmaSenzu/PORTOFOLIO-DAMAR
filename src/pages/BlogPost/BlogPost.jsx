@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { getBlogPosts } from '../../data/blog';
+import { blogService } from '../../services/blog';
+import { uploadService } from '../../services/upload';
 import { getLocalizedText, formatDate } from '../../utils/helpers';
 import { useAnalytics } from '../../hooks/useAnalytics';
 import Button from '../../components/Button/Button';
@@ -14,8 +15,23 @@ const BlogPost = () => {
     const { onPageView } = useAnalytics();
     const language = i18n.language;
 
-    const posts = getBlogPosts();
-    const post = posts.find(p => p.id === id);
+    const [post, setPost] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchPost = async () => {
+            try {
+                setLoading(true);
+                const res = await blogService.getBySlug(id);
+                setPost(res.data || res);
+            } catch (error) {
+                console.error('Failed to fetch blog post:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchPost();
+    }, [id]);
 
     useEffect(() => {
         if (post) {
@@ -26,6 +42,14 @@ const BlogPost = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [id]);
+
+    if (loading) {
+        return (
+            <div className="blog-post" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+                <div className="loading-spinner" />
+            </div>
+        );
+    }
 
     if (!post) {
         return (
@@ -83,7 +107,7 @@ const BlogPost = () => {
                         transition={{ duration: 0.5, delay: 0.1 }}
                     >
                         <img
-                            src={post.image}
+                            src={uploadService.getImageUrl(post.image)}
                             alt={getLocalizedText(post.title, language)}
                         />
                     </motion.div>

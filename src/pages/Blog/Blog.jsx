@@ -2,7 +2,8 @@ import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { getBlogPosts } from '../../data/blog';
+import { blogService } from '../../services/blog';
+import { uploadService } from '../../services/upload';
 import { getLocalizedText, formatDate } from '../../utils/helpers';
 import { useAnalytics } from '../../hooks/useAnalytics';
 import FilterTabs from '../../components/FilterTabs/FilterTabs';
@@ -15,12 +16,27 @@ const Blog = () => {
 
     const [searchQuery, setSearchQuery] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('all');
-
-    const posts = getBlogPosts();
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         onPageView('blog');
     }, [onPageView]);
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                setLoading(true);
+                const res = await blogService.getAll();
+                setPosts(res.data || res);
+            } catch (error) {
+                console.error('Failed to fetch blog posts:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchPosts();
+    }, []);
 
     const categoryFilters = [
         { value: 'all', label: t('blog.categories.all') },
@@ -48,6 +64,16 @@ const Blog = () => {
             return true;
         });
     }, [posts, searchQuery, categoryFilter]);
+
+    if (loading) {
+        return (
+            <main className="blog-page">
+                <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+                    <div className="loading-spinner" />
+                </div>
+            </main>
+        );
+    }
 
     return (
         <main className="blog-page">
@@ -103,9 +129,9 @@ const Blog = () => {
                                 viewport={{ once: true, margin: '-50px' }}
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
                             >
-                                <Link to={`/blog/${post.id}`} className="blog-card__image">
+                                <Link to={`/blog/${post.slug || post.id}`} className="blog-card__image">
                                     <img
-                                        src={post.image}
+                                        src={uploadService.getImageUrl(post.image)}
                                         alt={getLocalizedText(post.title, language)}
                                         loading="lazy"
                                     />
@@ -116,7 +142,7 @@ const Blog = () => {
                                         <span className="blog-card__date">{formatDate(post.date, language)}</span>
                                         <span className="blog-card__read-time">{post.readTime} {t('blog.minRead')}</span>
                                     </div>
-                                    <Link to={`/blog/${post.id}`}>
+                                    <Link to={`/blog/${post.slug || post.id}`}>
                                         <h2 className="blog-card__title">
                                             {getLocalizedText(post.title, language)}
                                         </h2>
@@ -124,7 +150,7 @@ const Blog = () => {
                                     <p className="blog-card__excerpt">
                                         {getLocalizedText(post.excerpt, language)}
                                     </p>
-                                    <Link to={`/blog/${post.id}`} className="blog-card__link">
+                                    <Link to={`/blog/${post.slug || post.id}`} className="blog-card__link">
                                         {t('blog.readMore')} →
                                     </Link>
                                 </div>

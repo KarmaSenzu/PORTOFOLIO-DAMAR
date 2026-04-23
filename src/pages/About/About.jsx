@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { skills, experiences, hobbies } from '../../data/skills';
-import { certificates } from '../../data/certificates';
+import { skillService } from '../../services/skills';
+import { certificateService } from '../../services/certificates';
+import { experienceService } from '../../services/experiences';
+import { settingsService } from '../../services/settings';
+import { uploadService } from '../../services/upload';
 import { getLocalizedText } from '../../utils/helpers';
 import { useAnalytics } from '../../hooks/useAnalytics';
 import Timeline from '../../components/Timeline/Timeline';
@@ -16,12 +19,44 @@ const About = () => {
     const { onPageView } = useAnalytics();
     const language = i18n.language;
 
+    // Data state
+    const [skills, setSkills] = useState([]);
+    const [certificates, setCertificates] = useState([]);
+    const [experiences, setExperiences] = useState([]);
+    const [hobbies, setHobbies] = useState([]);
+    const [loading, setLoading] = useState(true);
+
     // Certificate modal state
     const [selectedCert, setSelectedCert] = useState(null);
 
     useEffect(() => {
         onPageView('about');
     }, [onPageView]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const [skillsRes, certsRes, expRes, hobbiesRes] = await Promise.all([
+                    skillService.getAll(),
+                    certificateService.getAll(),
+                    experienceService.getAll(),
+                    settingsService.get('hobbies'),
+                ]);
+                setSkills(skillsRes.data || skillsRes || []);
+                setCertificates(certsRes.data || certsRes || []);
+                setExperiences(expRes.data || expRes || []);
+
+                const hobbiesData = hobbiesRes.value || hobbiesRes.data || hobbiesRes || [];
+                setHobbies(Array.isArray(hobbiesData) ? hobbiesData : []);
+            } catch (error) {
+                console.error('Failed to fetch about data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
 
     const openCertModal = (cert) => {
         setSelectedCert(cert);
@@ -30,6 +65,16 @@ const About = () => {
     const closeCertModal = () => {
         setSelectedCert(null);
     };
+
+    if (loading) {
+        return (
+            <main className="about-page">
+                <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+                    <div className="loading-spinner" />
+                </div>
+            </main>
+        );
+    }
 
     return (
         <main className="about-page">
@@ -127,7 +172,7 @@ const About = () => {
                                 whileHover={{ y: -4 }}
                             >
                                 <div className="cert-card__image">
-                                    <img src={cert.image} alt={getLocalizedText(cert.title, language)} />
+                                    <img src={uploadService.getImageUrl(cert.image)} alt={getLocalizedText(cert.title, language)} />
                                 </div>
                                 <div className="cert-card__content">
                                     <h4 className="cert-card__title">
@@ -170,7 +215,7 @@ const About = () => {
                             </button>
                             <div className="cert-modal__image">
                                 <img
-                                    src={selectedCert.image}
+                                    src={uploadService.getImageUrl(selectedCert.image)}
                                     alt={getLocalizedText(selectedCert.title, language)}
                                 />
                             </div>

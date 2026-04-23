@@ -2,8 +2,9 @@ import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getProjects } from '../../data/projects';
-import { heroImages, slideshowConfig } from '../../data/heroImages';
+import { projectService } from '../../services/projects';
+import { settingsService } from '../../services/settings';
+import { uploadService } from '../../services/upload';
 import { useAnalytics } from '../../hooks/useAnalytics';
 import ProjectCard from '../../components/ProjectCard/ProjectCard';
 import Button from '../../components/Button/Button';
@@ -13,8 +14,10 @@ const Home = () => {
     const { t } = useTranslation();
     const { onPageView } = useAnalytics();
 
-    const projects = getProjects();
-    const featuredProjects = projects.filter(p => p.featured).slice(0, 3);
+    const [featuredProjects, setFeaturedProjects] = useState([]);
+    const [heroImages, setHeroImages] = useState([]);
+    const [slideshowConfig, setSlideshowConfig] = useState({ interval: 5000, pauseOnHover: true, showDots: true });
+    const [loading, setLoading] = useState(true);
 
     // Slideshow state
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -23,6 +26,32 @@ const Home = () => {
     useEffect(() => {
         onPageView('home');
     }, [onPageView]);
+
+    // Fetch data from API
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const [projectsRes, heroRes, configRes] = await Promise.all([
+                    projectService.getAll({ featured: 'true' }),
+                    settingsService.get('hero_images'),
+                    settingsService.get('slideshow_config'),
+                ]);
+                setFeaturedProjects((projectsRes.data || projectsRes).slice(0, 3));
+
+                const images = heroRes.value || heroRes.data || heroRes || [];
+                setHeroImages(Array.isArray(images) ? images.map(img => uploadService.getImageUrl(img)) : []);
+
+                const config = configRes.value || configRes.data || configRes || {};
+                setSlideshowConfig(prev => ({ ...prev, ...config }));
+            } catch (error) {
+                console.error('Failed to fetch home data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
 
     // Auto slideshow
     useEffect(() => {
@@ -33,11 +62,21 @@ const Home = () => {
         }, slideshowConfig.interval);
 
         return () => clearInterval(timer);
-    }, [isPaused]);
+    }, [isPaused, heroImages.length, slideshowConfig.interval]);
 
     const goToSlide = useCallback((index) => {
         setCurrentSlide(index);
     }, []);
+
+    if (loading) {
+        return (
+            <main className="home">
+                <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+                    <div className="loading-spinner" />
+                </div>
+            </main>
+        );
+    }
 
     return (
         <main className="home">
